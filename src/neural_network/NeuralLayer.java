@@ -43,7 +43,7 @@ public class NeuralLayer {
      */
     public NeuralLayer(int inputSignalsAmount ,int outputSignalsAmount) throws RuntimeException {
         if (inputSignalsAmount < 1) {
-            throw new RuntimeException("amount of Neurons must be more then 0");
+            throw new RuntimeException("amount of Neuron's weights must be more then 0");
         }
         
         if (outputSignalsAmount < 1) {

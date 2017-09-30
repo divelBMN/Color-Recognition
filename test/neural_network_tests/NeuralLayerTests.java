@@ -104,7 +104,7 @@ public class NeuralLayerTests {
             int outputs = 2;
             NeuralLayer neuralLayer = new NeuralLayer(inputs, outputs);
         } catch (RuntimeException e) {
-            assertEquals(e.getMessage(), "amount of Neurons must be more then 0");
+            assertEquals(e.getMessage(), "amount of Neuron's weights must be more then 0");
         }        
     }
     
