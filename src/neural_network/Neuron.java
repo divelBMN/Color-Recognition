@@ -107,25 +107,94 @@ public class Neuron {
 
 	/**
 	 * Interface for weight's correcting.
-	 * @param deltaWeightsVector
+         * @param inputSignalsVector
+         * @param correctState
 	 * @throws RuntimeException
 	 */
-	public void correctWeights(float[] deltaWeightsVector) throws RuntimeException {
+	public void correctWeights(float[] inputSignalsVector, float correctState) throws RuntimeException {
 		int size = this.weightsVector.length;
-		if (size != deltaWeightsVector.length) {
-			throw new RuntimeException("size of deltaWeightsVector must be equals size of weightsVector");
+		if (size != inputSignalsVector.length) {
+                    throw new RuntimeException("size of inputSignalsVector must be equals size of weightsVector");
 		}
 
-		if (!this.checkValues(deltaWeightsVector)) {
-			throw new RuntimeException("one or more values out of range");
+		if (!this.checkValues(inputSignalsVector)) {
+                    throw new RuntimeException("one or more values out of range");
 		}
+                
+                if ((correctState < this.minValue) || (correctState > this.maxValue)) {
+                    throw new RuntimeException("correctState out of range");
+                }
 
+                float[] deltaWeightsVector = this.generateDeltaWeightsVector(inputSignalsVector, correctState);
 		float[] totalVector = this.calculateTotalVector(deltaWeightsVector);
 		this.weightsVector = this.createUnitVector(totalVector);
 	}
 
+        
 
-	
+	/**
+         * Generating vector for weights correcting.
+         * @param inputSignalsVector
+         * @param correctState
+         * @return 
+         */
+        private float [] generateDeltaWeightsVector(float [] inputSignalsVector, float correctState) {
+            int size = this.weightsVector.length;            
+            
+            float state = this.calculateState(inputSignalsVector);
+            float delta = correctState - state;
+            
+            float[] vector = new float[size];
+            for (int i = 0; i < size; i++)  {
+                vector[i] = inputSignalsVector[i] * delta;
+            }
+            
+            float[] result = this.correctMinBound(vector);
+            
+            return result;
+        }
+        
+        /**
+         * Correcting min bound of vector.
+         * Min bound must be more or equals than minValue.
+         * @param vector
+         * @return 
+         */
+        private float [] correctMinBound(float [] vector) {
+            int size = vector.length; 
+            float[] result = new float[size];
+            
+            float min = this.findMinValue(vector);
+            if (min < this.minValue) {
+                float delta = this.minValue - min;
+                for (int i = 0; i < size; i++) {
+                    result[i] = vector[i] + delta;
+                }
+            } else {
+                result = vector;
+            }
+            
+            return result;
+        }
+        
+        /**
+         * Finding minimum value in vector.
+         * @param vector
+         * @return 
+         */
+        private float findMinValue(float [] vector) {
+            float result = this.minValue;
+            
+            int size = vector.length;
+            for (int i = 0; i < size; i++) {
+                if (vector[i] < result) {
+                    result = vector[i];
+                }
+            }
+            
+            return result;
+        }
+        
 	/**
 	 * Checking values of vector for minValue and maxValue.
 	 * Return true, if all values of vector in the range minValue...maxValue.
