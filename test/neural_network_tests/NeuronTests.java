@@ -112,21 +112,22 @@ public class NeuronTests {
 	}
 
 	@Test
-	public void test_Neuron_weights_02f_03f_05f_0_deltaWeightsVector_1f_0_05f_1f_getWeightsVector_return_1f_0_05f_1f() {
+	public void test_Neuron_weights_02f_03f_05f_0_inputSignals_1f_0_0_0_correctState_1f_getWeightsVector_return_0556f_0167f_0278f_0f() {
 		float[] weights = new float[] {.2f, .3f, .5f, 0};
-		float[] deltaWeights = new float[] {1f, 0, .5f, 1f};
+		float[] inputSignals = new float[] {1f, 0, 0, 0};
+                float correctState = 1f;
 
 		try {
 			Neuron neuron  = new Neuron(weights);
 			try {
-				neuron.correctWeights(deltaWeights);
+				neuron.correctWeights(inputSignals, correctState);
 				float[] newWeights = neuron.getWeightsVector();
 
 				assertEquals(newWeights.length, 4);
-				assertEquals(newWeights[0], .343f, .001f);
-				assertEquals(newWeights[1], .086f, .001f);
-				assertEquals(newWeights[2], .286f, .001f);
-				assertEquals(newWeights[3], .286f, .001f);
+				assertEquals(newWeights[0], .556f, .001f);
+				assertEquals(newWeights[1], .167f, .001f);
+				assertEquals(newWeights[2], .278f, .001f);
+				assertEquals(newWeights[3], 0, .001f);
 
 			} catch (RuntimeException e) {
 				System.out.println(e.getMessage());
@@ -135,43 +136,88 @@ public class NeuronTests {
 			System.out.println(e.getMessage());
 		}
 	}
-
-	@Test
-	public void test_Neuron_weights_02f_03f_05f_0_deltaWeightsVector_minus1f_0_05f_1f_getWeightsVector_return_exception_WrongValue() {
+        
+        @Test
+	public void test_Neuron_weights_02f_03f_05f_0_inputSignals_0_1f_1f_0_correctState_0_getWeightsVector_return_028f_032f_02f_02f() {
 		float[] weights = new float[] {.2f, .3f, .5f, 0};
-		float[] deltaWeights = new float[] {-1f, 0, .5f, 1f};
+		float[] inputSignals = new float[] {0, 0, 1f, 0};
+                float correctState = 0;
 
 		try {
 			Neuron neuron  = new Neuron(weights);
 			try {
-				neuron.correctWeights(deltaWeights);
+				neuron.correctWeights(inputSignals, correctState);
+				float[] newWeights = neuron.getWeightsVector();
+
+				assertEquals(newWeights.length, 4);
+				assertEquals(newWeights[0], .28f, .001f);
+				assertEquals(newWeights[1], .32f, .001f);
+				assertEquals(newWeights[2], .2f, .001f);
+				assertEquals(newWeights[3], .2f, .001f);
+
 			} catch (RuntimeException e) {
-
-				assertTrue(e.getMessage() == "one or more values out of range");
-
+				System.out.println(e.getMessage());
 			}
 		} catch (RuntimeException e) {
 			System.out.println(e.getMessage());
 		}
 	}
-
-	@Test
-	public void test_Neuron_weights_02f_03f_05f_0_deltaWeightsVector_1f_0_05f_getWeightsVector_return_exception_IndexOfBounds() {
+        
+        @Test
+	public void test_Neuron_weights_02f_03f_05f_0_inputSignals_1f_0_0_correctState_1f_getWeightsVector_return_exception_WrongInputSignalsSize() {
 		float[] weights = new float[] {.2f, .3f, .5f, 0};
-		float[] deltaWeights = new float[] {1f, 0, .5f};
+		float[] inputSignals = new float[] {1f, 0, 0};
+                float correctState = 1f;
 
 		try {
 			Neuron neuron  = new Neuron(weights);
 			try {
-				neuron.correctWeights(deltaWeights);
+				neuron.correctWeights(inputSignals, correctState);
+				float[] newWeights = neuron.getWeightsVector();
 			} catch (RuntimeException e) {
-
-				assertTrue(e.getMessage() == "size of deltaWeightsVector must be equals size of weightsVector");
-
+                            assertEquals(e.getMessage(), "size of inputSignalsVector must be equals size of weightsVector");
 			}
 		} catch (RuntimeException e) {
 			System.out.println(e.getMessage());
 		}
 	}
+        
+        @Test
+	public void test_Neuron_weights_02f_03f_05f_0_inputSignals_2f_0_0_0_correctState_1f_getWeightsVector_return_exception_WrongValue() {
+		float[] weights = new float[] {.2f, .3f, .5f, 0};
+		float[] inputSignals = new float[] {2f, 0, 0, 0};
+                float correctState = 1f;
 
+		try {
+			Neuron neuron  = new Neuron(weights);
+			try {
+				neuron.correctWeights(inputSignals, correctState);
+				float[] newWeights = neuron.getWeightsVector();
+			} catch (RuntimeException e) {
+                            assertEquals(e.getMessage(), "one or more values out of range");
+			}
+		} catch (RuntimeException e) {
+			System.out.println(e.getMessage());
+		}
+	}
+        
+        @Test
+	public void test_Neuron_weights_02f_03f_05f_0_inputSignals_1f_0_0_0_correctState_minus1f_getWeightsVector_return_exception_WrongCorrectState() {
+		float[] weights = new float[] {.2f, .3f, .5f, 0};
+		float[] inputSignals = new float[] {1f, 0, 0, 0};
+                float correctState = -1f;
+
+		try {
+			Neuron neuron  = new Neuron(weights);
+			try {
+				neuron.correctWeights(inputSignals, correctState);
+				float[] newWeights = neuron.getWeightsVector();
+			} catch (RuntimeException e) {
+                            assertEquals(e.getMessage(), "correctState out of range");
+			}
+		} catch (RuntimeException e) {
+			System.out.println(e.getMessage());
+		}
+	}
+        
 }

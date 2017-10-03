@@ -209,7 +209,7 @@ public class NeuralLayerTests {
     }
     
     @Test
-    public void test_NeuralLayer_neuron0_size_3_neuron1_size_3_deltaWeightsVector_0_1f_1f_correct_index_0_return_ok() {
+    public void test_NeuralLayer_neuron0_size_3_neuron1_size_3_inputSignalsVector_0_1f_1f_correctState_1f_correct_index_0_return_ok() {
         Neuron[] neurons = new Neuron[2];
         neurons[0] = new Neuron(3);
         neurons[1] = new Neuron(3);
@@ -217,10 +217,11 @@ public class NeuralLayerTests {
         try {
             NeuralLayer neuralLayer = new NeuralLayer(neurons);
             int index = 0;
-            float[] deltaWeights = new float[] {0, 1f, 1f};
+            float[] inputSignals = new float[] {0, 1f, 1f};
+            float correctState = 1f;
             
             try {
-                neuralLayer.correctNeuron(index, deltaWeights);
+                neuralLayer.correctNeuron(index, inputSignals, correctState);
                 assertTrue(true);
             } catch (RuntimeException e) {
                 System.err.println(e.getMessage());
@@ -231,7 +232,7 @@ public class NeuralLayerTests {
     }
     
     @Test
-    public void test_NeuralLayer_neuron0_size_3_neuron1_size_3_deltaWeightsVector_0_1f_1f_correct_index_2_return_exception_WrongIndex() {
+    public void test_NeuralLayer_neuron0_size_3_neuron1_size_3_inputSignalsVector_0_1f_1f_correctState_1f_correct_index_2_return_exception_WrongIndex() {
         Neuron[] neurons = new Neuron[2];
         neurons[0] = new Neuron(3);
         neurons[1] = new Neuron(3);
@@ -239,10 +240,11 @@ public class NeuralLayerTests {
         try {
             NeuralLayer neuralLayer = new NeuralLayer(neurons);
             int index = 2;
-            float[] deltaWeights = new float[] {0, 1f, 1f};
+            float[] inputSignals = new float[] {0, 1f, 1f};
+            float correctState = 1f;
             
             try {
-                neuralLayer.correctNeuron(index, deltaWeights);
+                neuralLayer.correctNeuron(index, inputSignals, correctState);
             } catch (RuntimeException e) {
                 assertEquals(e.getMessage(), "index out of bounds");
             }
@@ -252,7 +254,7 @@ public class NeuralLayerTests {
     }
     
     @Test
-    public void test_NeuralLayer_neuron0_size_3_neuron1_size_3_deltaWeightsVector_0_1f_correct_index_0_return_exception_WrongAmount() {
+    public void test_NeuralLayer_neuron0_size_3_neuron1_size_3_inputSignalsVector_0_1f_correctState_1f_correct_index_0_return_exception_WrongSize() {
         Neuron[] neurons = new Neuron[2];
         neurons[0] = new Neuron(3);
         neurons[1] = new Neuron(3);
@@ -260,12 +262,57 @@ public class NeuralLayerTests {
         try {
             NeuralLayer neuralLayer = new NeuralLayer(neurons);
             int index = 0;
-            float[] deltaWeights = new float[] {0, 1f};
+            float[] inputSignals = new float[] {0, 1f};
+            float correctState = 1f;
             
             try {
-                neuralLayer.correctNeuron(index, deltaWeights);
+                neuralLayer.correctNeuron(index, inputSignals, correctState);
             } catch (RuntimeException e) {
-                assertEquals(e.getMessage(), "amounts of deltaWeightsVector and weightsVector of Neuron must be equals");
+                assertEquals(e.getMessage(), "size of inputSignalsVector must be equals size of weightsVector");
+            }
+        } catch (RuntimeException e) {
+            System.err.println(e.getMessage());
+        }        
+    }
+    
+    @Test
+    public void test_NeuralLayer_neuron0_size_3_neuron1_size_3_inputSignalsVector_0_2f_1f_correctState_1f_correct_index_0_return_exception_WrongInputSignalsValue() {
+        Neuron[] neurons = new Neuron[2];
+        neurons[0] = new Neuron(3);
+        neurons[1] = new Neuron(3);
+        
+        try {
+            NeuralLayer neuralLayer = new NeuralLayer(neurons);
+            int index = 0;
+            float[] inputSignals = new float[] {0, 2f, 1f};
+            float correctState = 1f;
+            
+            try {
+                neuralLayer.correctNeuron(index, inputSignals, correctState);
+            } catch (RuntimeException e) {
+                assertEquals(e.getMessage(), "one or more values out of range");
+            }
+        } catch (RuntimeException e) {
+            System.err.println(e.getMessage());
+        }        
+    }
+    
+    @Test
+    public void test_NeuralLayer_neuron0_size_3_neuron1_size_3_inputSignalsVector_0_1f_1f_correctState_2f_correct_index_0_return_exception_WrongCorrectState() {
+        Neuron[] neurons = new Neuron[2];
+        neurons[0] = new Neuron(3);
+        neurons[1] = new Neuron(3);
+        
+        try {
+            NeuralLayer neuralLayer = new NeuralLayer(neurons);
+            int index = 0;
+            float[] inputSignals = new float[] {0, 1f, 1f};
+            float correctState = 2f;
+            
+            try {
+                neuralLayer.correctNeuron(index, inputSignals, correctState);
+            } catch (RuntimeException e) {
+                assertEquals(e.getMessage(), "correctState out of range");
             }
         } catch (RuntimeException e) {
             System.err.println(e.getMessage());

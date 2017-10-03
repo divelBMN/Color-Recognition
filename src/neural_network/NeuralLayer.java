@@ -108,16 +108,16 @@ public class NeuralLayer {
      * @param deltaWeights
      * @throws RuntimeException 
      */
-    public void correctNeuron(int index, float [] deltaWeights) throws RuntimeException{
+    public void correctNeuron(int index, float [] inputSignalsVector, float correctState) throws RuntimeException{
         if (!this.indexInBounds(index)) {
             throw new RuntimeException("index out of bounds");
         }
         
-        if (this.neurons[index].getWeightsVector().length != deltaWeights.length) {
-            throw new RuntimeException("amounts of deltaWeightsVector and weightsVector of Neuron must be equals");
+        try {
+            this.neurons[index].correctWeights(inputSignalsVector, correctState);
+        } catch (RuntimeException e) {
+            throw new RuntimeException(e.getMessage());
         }
-        
-        this.neurons[index].correctWeights(deltaWeights);
     }
     
     
