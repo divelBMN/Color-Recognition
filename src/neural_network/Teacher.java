@@ -28,12 +28,21 @@ public class Teacher {
      * @param positiveEvaluation true, if the network response is correct.
      */
     public void correctNeuralNetwork(float [] inputSignalsVector, boolean positiveEvaluation) throws RuntimeException {
+        
         if (this.network.getNeuralLayer().getInputSignalsAmount() != inputSignalsVector.length) {
             throw new RuntimeException("amounts of inputSignals and neuron's weights amount must be equals");
         }
 
-        float[] correctStates = this.generateCorrectStates(positiveEvaluation);
+        boolean evaluation = positiveEvaluation;
+        float[] states = this.network.getOutputSignalsVector(inputSignalsVector);
+        if (states[0] <= states[1]) {
+            evaluation = !evaluation;
+        }
+        
+        float[] correctStates = this.generateCorrectStates(evaluation);
+        
         this.correct(inputSignalsVector, correctStates);
+        
     }
     
     /**
@@ -57,11 +66,14 @@ public class Teacher {
         
         for (int i = 0; i < neuronsAmount; i++) {
             try {
-                Neuron neuron = layer.getNeuron(i);
                 
+                Neuron neuron = layer.getNeuron(i);                
                 neuron.correctWeights(inputSignalsVector, correctStates[i]);
+                
             } catch (RuntimeException e) {
+                
                 System.out.println(e.getMessage());
+                
             }
         }
     }

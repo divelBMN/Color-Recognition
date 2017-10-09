@@ -124,10 +124,14 @@ public class Neuron {
                 if ((correctState < this.minValue) || (correctState > this.maxValue)) {
                     throw new RuntimeException("correctState out of range");
                 }
+                
+                float state = this.getState(inputSignalsVector);
+                if (state <= correctState) {
+                    float[] deltaWeightsVector = this.generateDeltaWeightsVector(inputSignalsVector, correctState);
+                    float[] totalVector = this.calculateTotalVector(deltaWeightsVector);
+                    this.weightsVector = this.createUnitVector(totalVector);
+                }
 
-                float[] deltaWeightsVector = this.generateDeltaWeightsVector(inputSignalsVector, correctState);
-		float[] totalVector = this.calculateTotalVector(deltaWeightsVector);
-		this.weightsVector = this.createUnitVector(totalVector);
 	}
 
         
